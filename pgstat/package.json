@@ -1,0 +1,25 @@
+{
+  "name": "package.json",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.5",
+    "express": "^4.17.1",
+    "image-to-base64": "^2.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.0.0",
+    "node-cron": "^2.0.3",
+    "path": "^0.12.7",
+    "request": "^2.88.2",
+    "utf8": "^3.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "app": "node server/app.js"
+  },
+  "keywords": [],
+  "author": "Mykhailo Pedash",
+  "license": "ISC",
+  "devDependencies": {},
+  "description": ""
+}
