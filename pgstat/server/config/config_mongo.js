@@ -3,7 +3,7 @@
  */
 module.exports = {
     // dbName: "mop_pg_collection",
-    // mongoURL: 'mongodb+srv://potapich:021289mop@cluster-vision.ylusk.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
-    mongoURL: "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB Compass&ssl=false",
+    mongoURL: 'mongodb+srv://potapich:021289mop@cluster-vision.ylusk.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+    // mongoURL: "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB Compass&ssl=false",
     bestCollection: 'pg_as_best_collection'
 };
