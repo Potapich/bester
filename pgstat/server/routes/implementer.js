@@ -34,7 +34,7 @@ router.post('/createRecord', function (req, res) {
             let promise2 = new Promise((resolve, reject) => {
                 setTimeout(() => {
                     resolve();
-                }, 2000 + j * 2000);
+                }, 5000 + j * 5000);
             });
             promise2.then(() => {
                 var l = locals.length;
@@ -60,7 +60,7 @@ function get_gameInfo(gameData, local) {
         const promiser = new Promise((resolve, reject) => {
             setTimeout(function () {
                 resolve(index - 1);
-            }, 2500 + i * 2500);
+            }, 5000 + i * 5000);
         });
         promiser.then((index) => {
             if (gameData[index]) {
