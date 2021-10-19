@@ -33,15 +33,15 @@ router.post('/createRecord', function (req, res) {
         while (j !== 0) {
             let promise2 = new Promise((resolve, reject) => {
                 setTimeout(resolve, 1000 + j * 1000);
+                j--
             });
             promise2.then(() => {
                 let l = locals.length;
                 for (let key in locals) {
-                    setTimeout(get_gameInfo, 1000 + l * 1000, JSON.parse(JSON.stringify(req.body)), locals[key]);
+                    setTimeout(get_gameInfo, 2000 + l * 1000, JSON.parse(JSON.stringify(req.body)), locals[key]);
                     l--
                 }
             });
-            j--
         }
         res.send('got it!');
     } else {
@@ -54,7 +54,7 @@ function get_gameInfo(gameData, local) {
     for (let i = gameData.length; i > 0; i--) {
         let index = i;
         const promiser = new Promise((resolve, reject) => {
-            setTimeout(resolve, 1000 + i * 1000, index - 1);
+            setTimeout(resolve, 3000 + i * 1000, index - 1);
         });
         promiser.then((index) => {
             if (gameData[index]) {
