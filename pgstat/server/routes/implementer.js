@@ -32,17 +32,13 @@ router.post('/createRecord', function (req, res) {
         let j = JSON.parse(JSON.stringify(req.body)).length - 1;
         while (j !== 0) {
             let promise2 = new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    resolve();
-                }, 5000 + j * 5000);
+                setTimeout(resolve, 1000 + j * 1000);
             });
             promise2.then(() => {
-                var l = locals.length;
+                let l = locals.length;
                 for (let key in locals) {
+                    setTimeout(get_gameInfo, 1000 + l * 1000, JSON.parse(JSON.stringify(req.body)), locals[key]);
                     l--
-                    setTimeout(function () {
-                        get_gameInfo(JSON.parse(JSON.stringify(req.body)), locals[key])
-                    }, 5000 + l * 5000);
                 }
             });
             j--
@@ -55,12 +51,10 @@ router.post('/createRecord', function (req, res) {
 
 
 function get_gameInfo(gameData, local) {
-    for (var i = gameData.length; i > 0; i--) {
+    for (let i = gameData.length; i > 0; i--) {
         let index = i;
         const promiser = new Promise((resolve, reject) => {
-            setTimeout(function () {
-                resolve(index - 1);
-            }, 5000 + i * 5000);
+            setTimeout(resolve, 1000 + i * 1000, index - 1);
         });
         promiser.then((index) => {
             if (gameData[index]) {
@@ -79,6 +73,7 @@ function get_gameInfo(gameData, local) {
                     /**let base64img = urlToBase64_encode('https://play-lh.googleusercontent.com/xOgV-lsJ0C3367TI_ECmWk0Xg27IYRM_srFNe-WC1fYUnzgLIm8Ysz3igpLRkT1M2tI=s180');
                      console.log('base64img', urlToBase64_encode('https://play-lh.googleusercontent.com/xOgV-lsJ0C3367TI_ECmWk0Xg27IYRM_srFNe-WC1fYUnzgLIm8Ysz3igpLRkT1M2tI=s180'));*/
                     try {
+                        console.log('local, game: ', local.hl, gameData[index]);
                         let $ = cheerio.load(body);
                         let listOpt = [];
                         $('div[class="IxB2fe"]').find('div > span > div > span').each(function (index, element) {
