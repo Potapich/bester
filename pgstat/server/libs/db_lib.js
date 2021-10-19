@@ -143,11 +143,8 @@ function insertLog(adminName, user, action, system, description) {
 
 async function createIdAssociation(uniqueID, genre, LocalHl) {
     try {
-        console.error('uniqueID:', uniqueID)
-
         assocCollection.find({"genre": genre}).toArray(function (err, result) {
             if (typeof result !== "undefined" && result.length > 0) {
-                console.log('same genre: ', genre, uniqueID)
                 var newArr = [uniqueID];
                 var nowArr = result[0].games;
 
@@ -160,7 +157,6 @@ async function createIdAssociation(uniqueID, genre, LocalHl) {
                     }
                 })
             } else {
-                console.log('new genre: ', genre, uniqueID)
                 let gameArray = [uniqueID];
                 assocCollection.insertOne({
                     "genre": genre,

@@ -55,7 +55,6 @@ router.post('/createRecord', function (req, res) {
 
 
 function get_gameInfo(gameData, local) {
-    // console.log(gameData.length)
     for (var i = gameData.length; i > 0; i--) {
         let index = i;
         const promiser = new Promise((resolve, reject) => {
@@ -64,7 +63,6 @@ function get_gameInfo(gameData, local) {
             }, 2500 + i * 2500);
         });
         promiser.then((index) => {
-            // console.log(gameData[Math.floor(index / locals.length)] + ', local is ' + locals[Math.floor(index / gameData.length)].hl);
             if (gameData[index]) {
                 let options = {
                     url: gameData[index] + '&hl=' + local.hl + '&gl=' + local.gl,
@@ -72,8 +70,6 @@ function get_gameInfo(gameData, local) {
                     'Content-Type': 'text/plain; charset=utf-8'
                 };
                 request(options, function (error, response, body) {
-                    console.log('Resp done ', gameData[index] + '&hl=' + local.hl + '&gl=' + local.gl);
-                    fs.appendFileSync(__dirname + "/../../logs/logs.log", `Resp done, ${gameData[index]} &hl=  ${local.hl} &gl= ${local.gl} in ${new Date()} \n`)
                     if (error) {
                         console.log('Error during load page:', error);
                         return
@@ -192,7 +188,6 @@ function urlToBase64_encode(gameUrl, localHl, localGl, localURL, screenShot, loc
                             "image": imageGame,
                             "screenshots": response
                         };
-                        console.log(gameUrl, genre, localHl)
                         saveIdAssociation(uniqueID, genre, localHl).then()
                         saver(fin_obj).then();
                     }
