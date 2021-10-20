@@ -93,7 +93,7 @@ function letGrub(gameData, local) {
                 //     listScreens.push($(element).attr('src'));
                 // });
                 // console.log(listScreens)
-                urlToBase64_encode(gameData, local.hl, local.gl,
+                finallySaver(gameData, local.hl, local.gl,
                     $('div[class=xSyT2c]').html().split('"')[1],
                     $('div[class=SgoUSc]').html().split('src="')[1].split('"')[0],
                     $('div[class=pf5lIe]').html().split('"')[1],
@@ -163,14 +163,14 @@ function letGrub(gameData, local) {
 //     };
 // }
 
-// function to encode data to base64 encoded string by url
-function urlToBase64_encode(gameUrl, localHl, localGl, localURL, screenShot, localRate, name, descr, weight, instals, genre) {
-    imageToBase64(localURL) // Image URL
-        .then(
-            (response) => {
-                let imageGame = response
-                imageToBase64(screenShot).then(
-                    (response) => {
+// function to encode data to base64 encoded string by url - its to much
+function finallySaver(gameUrl, localHl, localGl, localURL, screenShot, localRate, name, descr, weight, instals, genre) {
+    // imageToBase64(localURL) // Image URL
+    //     .then(
+    //         (response) => {
+    //             let imageGame = response
+    //             imageToBase64(screenShot).then(
+    //                 (response) => {
                         let uniqueID = crypto.createHash('md5').update(gameUrl + '&hl=' + localHl + '&gl=' + localGl).digest('hex')
                         let fin_obj = {
                             "id": uniqueID,
@@ -190,36 +190,29 @@ function urlToBase64_encode(gameUrl, localHl, localGl, localURL, screenShot, loc
                         };
                         saveIdAssociation(uniqueID, genre, localHl).then()
                         saver(fin_obj).then();
-                    }
-                )
-                    .catch(
-                        (error) => {
-                            console.error('Error during taken screenshot: ', error)
-                        }
-                    )
-            }
-        )
-        .catch(
-            (error) => {
-                console.error('Error during taken image of game: ', error)
-            }
-        )
+                    // }
+                // )
+        //             .catch(
+        //                 (error) => {
+        //                     console.error('Error during taken screenshot: ', error)
+        //                 }
+        //             )
+        //     }
+        // )
+        // .catch(
+        //     (error) => {
+        //         console.error('Error during taken image of game: ', error)
+        //     }
+        // )
 }
 
 async function saver(gameData) {
-    // let data = await get_gameInfo(JSON.parse(JSON.stringify(req.body)));//JSON.parse(JSON.stringify(req.body));
     await lib_db.createRecord(gameData);
-    // lib_db.insertLog('vocabulary', 'vocabulary', 'Create record to vocabulary', data.type, data, 'createRecord');
-    // let createdRecord = await lib_db.getRecordsArray();
-    // console.log('finished')//, createdRecord)
 }
 
 async function saveIdAssociation(uniqueID, genre, LocalHl) {
-    // let data = await get_gameInfo(JSON.parse(JSON.stringify(req.body)));//JSON.parse(JSON.stringify(req.body));
     await lib_db.createIdAssociation(uniqueID, genre, LocalHl);
-    // lib_db.insertLog('vocabulary', 'vocabulary', 'Create record to vocabulary', data.type, data, 'createRecord');
-    // let createdRecord = await lib_db.getRecordsArray();
-    // console.log('finished 2')//, createdRecord)
+
 }
 
 module.exports = router;
