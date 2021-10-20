@@ -29,19 +29,15 @@ router.get('/getRecords', async function (req, res) {
 
 router.post('/createRecord', function (req, res) {
     if (req.body) {
-        let j = JSON.parse(JSON.stringify(req.body)).length - 1;
-        while (j !== 0) {
-            let promise2 = new Promise((resolve, reject) => {
-                setTimeout(resolve, 1000 + j * 1000);
-                j--
-            });
-            promise2.then(() => {
-                let l = locals.length;
-                for (let key in locals) {
-                    setTimeout(get_gameInfo, 2000 + l * 1000, JSON.parse(JSON.stringify(req.body)), locals[key]);
-                    l--
-                }
-            });
+        let j = JSON.parse(JSON.stringify(req.body)).length;
+        console.log(JSON.parse(JSON.stringify(req.body)))
+        let l = locals.length * j;
+        let games = JSON.parse(JSON.stringify(req.body));
+        for (let key in games) {
+            for (let jey in locals) {
+                setTimeout(letGrub, l * 5000, games[key], locals[jey]);
+                l--
+            }
         }
         res.send('got it!');
     } else {
@@ -49,58 +45,67 @@ router.post('/createRecord', function (req, res) {
     }
 });
 
+// function gameCount(body) {
+//     console.log('i am gameCount')
+//     let l = locals.length;
+//     for (let key in locals) {
+//         console.log('i am locals')
+//         for (let i = body.length; i > 0; i--) {
+//             console.log('i am req', l, i)
+//             setTimeout(letGrub, 2000 + l*1000, body, i, locals[key]);
+//             l--
+//         }
+//     }
+// }
 
-function get_gameInfo(gameData, local) {
-    for (let i = gameData.length; i > 0; i--) {
-        let index = i;
-        const promiser = new Promise((resolve, reject) => {
-            setTimeout(resolve, 3000 + i * 1000, index - 1);
-        });
-        promiser.then((index) => {
-            if (gameData[index]) {
-                let options = {
-                    url: gameData[index] + '&hl=' + local.hl + '&gl=' + local.gl,
-                    method: 'GET',
-                    'Content-Type': 'text/plain; charset=utf-8'
-                };
-                request(options, function (error, response, body) {
-                    if (error) {
-                        console.log('Error during load page:', error);
-                        return
-                    }
+// function get_gameInfo(gameData, local) {
+//     console.log('i am get_gameInfo', gameData.length)
+//     for (let i = gameData.length; i > 0; i--) {
+//         setTimeout(letGrub, 3000 + i * 1000, gameData, i - 1, local);
+//     }
+// }
 
-                    //convert image to base 64 and to base!
-                    /**let base64img = urlToBase64_encode('https://play-lh.googleusercontent.com/xOgV-lsJ0C3367TI_ECmWk0Xg27IYRM_srFNe-WC1fYUnzgLIm8Ysz3igpLRkT1M2tI=s180');
-                     console.log('base64img', urlToBase64_encode('https://play-lh.googleusercontent.com/xOgV-lsJ0C3367TI_ECmWk0Xg27IYRM_srFNe-WC1fYUnzgLIm8Ysz3igpLRkT1M2tI=s180'));*/
-                    try {
-                        console.log('local, game: ', local.hl, gameData[index]);
-                        let $ = cheerio.load(body);
-                        let listOpt = [];
-                        $('div[class="IxB2fe"]').find('div > span > div > span').each(function (index, element) {
-                            listOpt.push($(element).text());
-                        });
-                        //todo get all screenShots ! example work already !!!
-                        // let listScreens = [];
-                        // $('div[class="SgoUSc"]').find('button > img').each(function (index, element) {
-                        //     listScreens.push($(element).attr('src'));
-                        // });
-                        // console.log(listScreens)
-                        urlToBase64_encode(gameData[index], local.hl, local.gl,
-                            $('div[class=xSyT2c]').html().split('"')[1],
-                            $('div[class=SgoUSc]').html().split('src="')[1].split('"')[0],
-                            $('div[class=pf5lIe]').html().split('"')[1],
-                            $('h1[class=AHFaub]').html().split('<span>')[1].split('</span>')[0],
-                            $('div[class=DWPxHb]').html().split('<div jsname="sngebd">')[1].split('</div>')[0],
-                            listOpt[1],
-                            listOpt[2],
-                            $('div[class=qQKdcc]').html().split('">')[4].split('</a>')[0]);
-                    } catch (err) {
-                        console.log('Parse error.\nDetail: ', gameData[index], '\n', err)
-                    }
-                })
-
+function letGrub(gameData, local) {
+    if (gameData) {
+        let options = {
+            url: gameData + '&hl=' + local.hl + '&gl=' + local.gl,
+            method: 'GET',
+            'Content-Type': 'text/plain; charset=utf-8'
+        };
+        request(options, function (error, response, body) {
+            if (error) {
+                console.log('Error during load page:', error);
+                return
             }
-        });
+            //convert image to base 64 and to base!
+            /**let base64img = urlToBase64_encode('https://play-lh.googleusercontent.com/xOgV-lsJ0C3367TI_ECmWk0Xg27IYRM_srFNe-WC1fYUnzgLIm8Ysz3igpLRkT1M2tI=s180');
+             console.log('base64img', urlToBase64_encode('https://play-lh.googleusercontent.com/xOgV-lsJ0C3367TI_ECmWk0Xg27IYRM_srFNe-WC1fYUnzgLIm8Ysz3igpLRkT1M2tI=s180'));*/
+            try {
+                console.log('local, game: ', new Date(), local.hl, gameData + '&hl=' + local.hl + '&gl=' + local.gl);
+                let $ = cheerio.load(body);
+                let listOpt = [];
+                $('div[class="IxB2fe"]').find('div > span > div > span').each(function (index, element) {
+                    listOpt.push($(element).text());
+                });
+                //todo get all screenShots ! example work already !!!
+                // let listScreens = [];
+                // $('div[class="SgoUSc"]').find('button > img').each(function (index, element) {
+                //     listScreens.push($(element).attr('src'));
+                // });
+                // console.log(listScreens)
+                urlToBase64_encode(gameData, local.hl, local.gl,
+                    $('div[class=xSyT2c]').html().split('"')[1],
+                    $('div[class=SgoUSc]').html().split('src="')[1].split('"')[0],
+                    $('div[class=pf5lIe]').html().split('"')[1],
+                    $('h1[class=AHFaub]').html().split('<span>')[1].split('</span>')[0],
+                    $('div[class=DWPxHb]').html().split('<div jsname="sngebd">')[1].split('</div>')[0],
+                    listOpt[1],
+                    listOpt[2],
+                    $('div[class=qQKdcc]').html().split('">')[4].split('</a>')[0]);
+            } catch (err) {
+                console.log('Parse error.\nDetail: ', gameData, '\n', err)
+            }
+        })
     }
 }
 
