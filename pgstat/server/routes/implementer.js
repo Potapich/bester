@@ -96,6 +96,8 @@ function letGrub(gameData, local) {
                 finallySaver(gameData, local.hl, local.gl,
                     $('div[class=xSyT2c]').html().split('"')[1],
                     $('div[class=SgoUSc]').html().split('src="')[1].split('"')[0],
+                    $('div[class=SgoUSc]').html().split('src="')[2].split('"')[0],
+                    $('div[class=SgoUSc]').html().split('src="')[3].split('"')[0],
                     $('div[class=pf5lIe]').html().split('"')[1],
                     $('h1[class=AHFaub]').html().split('<span>')[1].split('</span>')[0],
                     $('div[class=DWPxHb]').html().split('<div jsname="sngebd">')[1].split('</div>')[0],
@@ -164,7 +166,7 @@ function letGrub(gameData, local) {
 // }
 
 // function to encode data to base64 encoded string by url - its to much
-function finallySaver(gameUrl, localHl, localGl, localURL, screenShot, localRate, name, descr, weight, instals, genre) {
+function finallySaver(gameUrl, localHl, localGl, localURL, screenShot, screenShot2, screenShot3, localRate, name, descr, weight, instals, genre) {
     // imageToBase64(localURL) // Image URL
     //     .then(
     //         (response) => {
@@ -185,8 +187,8 @@ function finallySaver(gameUrl, localHl, localGl, localURL, screenShot, localRate
                             "localHl": localHl,
                             "localGl": localGl,
                             "stars": localRate,
-                            "image": imageGame,
-                            "screenshots": response
+                            "image": localURL,
+                            "screenshots": [screenShot, screenShot2, screenShot3]
                         };
                         saveIdAssociation(uniqueID, genre, localHl).then()
                         saver(fin_obj).then();
