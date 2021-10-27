@@ -68,7 +68,7 @@ router.get('/content/getAllByLocalHl', async function (req, res) {
 
         if (result || mains || catalog) {
             let answer = {
-                "labels": mains,
+                "labels": mains[0],
                 "games": result,
                 "catalog": catalog
             }
