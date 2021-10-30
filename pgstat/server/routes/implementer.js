@@ -45,6 +45,25 @@ router.post('/createRecord', function (req, res) {
     }
 });
 
+router.post('/createRecordAdmin', function (req, res) {
+    if (req.body) {
+        let j = Object.values(JSON.parse(JSON.stringify(req.body))).length;
+        console.log(Object.values(JSON.parse(JSON.stringify(req.body))))
+        let l = locals.length * j;
+        let games = Object.values(JSON.parse(JSON.stringify(req.body)));
+        for (let key in games) {
+            for (let jey in locals) {
+                setTimeout(letGrub, l * 5000, games[key], locals[jey]);
+                l--
+            }
+        }
+        res.send({success: true});
+    } else {
+        res.status(400).json({'message': 'Partial Content. Not enough data!', 'description': 'Partial Content. Not enough data!'})
+    }
+});
+
+
 // function gameCount(body) {
 //     console.log('i am gameCount')
 //     let l = locals.length;

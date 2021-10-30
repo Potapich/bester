@@ -14,6 +14,7 @@ const cron = require('node-cron');
 const jwt = require('jsonwebtoken')
 const config = require('./config')
 const app = express();
+const fs = require('fs');
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
@@ -37,7 +38,7 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, accept, content-type, user-agent,accept-encoding,accept-language');
     // try {
     //     if (!jwt.verify(req.query.secr, config.jwtSecret)) {
-            next();
+    next();
     //     } else {
     //         res.status(401).json({'message': 'error', 'description': 'Partial Content. Not enough data!'})
     //     }
@@ -46,16 +47,57 @@ app.use(function (req, res, next) {
     // }
 });
 
+app.all('/', function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    if ('OPTIONS' === req.method) {
+        //respond with 200
+        res.end('ok');
+    } else {
+        //move on
+        next();
+    }
+});
+
+app.get(
+    ['/detailDelta*', '/simpleDelta*', '/detailSmart*',
+        '/runtime*', '/polyfills*', '/styles*', '/main*', '/Exo2*', '/favicon*', '/assets*'],
+    function (req, res, next) {
+        if (req.url.length > 1) {
+            let filePath = req.url;
+            let getFileRequest = fs.existsSync(__dirname + '/front/best-games' + filePath);
+            if (getFileRequest) {
+                let requestFile = fs.readFileSync(__dirname + '/front/best-games' + filePath);
+                res.write(requestFile);
+                res.end();
+            } else {
+                res.status(400).json('error');
+            }
+        } else {
+            next();
+        }
+    }
+);
+
+app.get('/admin', function (req, res, next) {
+    res.sendFile('index.html', {root: __dirname + '/front/best-games/'});
+});
+
 //rout best grabber
 const implementer = require('./routes/implementer');
 
 //rout best unload
 const giveoutter = require('./routes/giveoutter');
 
+//rout best admin
+const adminer = require('./routes/adminer');
+
 app.use('/pg_as_best/workout', implementer);
 
 //best getter
 app.use('/pg_as_best/giveaway', giveoutter);
+
+//best admin
+app.use('/pg_as_best/adminer', adminer);
 
 app.get('/pgstat/present', function (req, res) {
 

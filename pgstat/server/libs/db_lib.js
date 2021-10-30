@@ -1,5 +1,6 @@
 const mongoConfig = require('../config/config_mongo');
 const MongoClient = require('mongodb').MongoClient;
+const ObjectId = require('mongodb').ObjectId;
 
 let urlDB = mongoConfig.mongoURL;//'mongodb://' + mongoConfig.user + ':' + mongoConfig.password + '@' + mongoConfig.rootlink_ip + ',' + mongoConfig.secondarylink_ip;
 const dbName = mongoConfig.dbName;
@@ -8,6 +9,9 @@ let bestCollection;
 let assocCollection;
 let logsCollection;
 let bestCollectionMain;
+
+const collectionsSettings = new Map();
+const collectionsConnections = new Map();
 
 (function mongo_starter() {
     MongoClient.connect(urlDB, {   // + '/' + dbName, {
@@ -167,6 +171,164 @@ async function createIdAssociation(uniqueID, genre, LocalHl) {
     }
 }
 
+async function getCollectionSettings() {
+    await updateCollectionSettings();
+    return Array.from(collectionsSettings).map((coll) => coll[1]);
+}
+
+async function updateCollectionSettings() {
+    collectionsSettings.clear();
+    collectionsConnections.clear();
+
+    const allCollections = await dbo.listCollections().toArray();
+    const collectionNames = allCollections
+        .map((coll) => {
+            return coll.name
+        })
+        .filter((name) => {
+            const reg = /pg_as(?!os)/i;
+            return reg.test(name)
+        });
+
+    for (const collection of collectionNames) {
+        const collectionConnection = dbo.collection(collection);
+        const docArr = await collectionConnection.find({}).limit(1).toArray();
+        const document = docArr[0];
+        const collectionIndexes = await collectionConnection.indexes();
+        const collectionIndexedKeys = collectionIndexes.map(
+            (indexObj) => {
+                const key = Object.keys(indexObj.key)[0];
+                let valueType;
+
+                if (key === '_id') {
+                    valueType = 'objectId';
+                } else if (key === 'createdAt') {
+                    valueType = 'date';
+                } else {
+                    valueType = document && document[key] ? typeof document[key] : 'string';
+                }
+                return {
+                    key,
+                    type: valueType
+                };
+            }
+        );
+
+        const settings = {
+            collectionName: collection,
+            keys: Object.keys(document || {}),
+            indexedKeys: collectionIndexedKeys,
+        };
+
+        collectionsSettings.set(collection, settings);
+        collectionsConnections.set(collection, collectionConnection);
+
+        if (docArr.length) {
+            collectionsSettings.set(collection, settings);
+        }
+    }
+}
+
+async function getListFromCollection(
+    collectionName,
+    limit = 10,
+    skip = 0,
+    collectionsUpdated = false
+) {
+    if (collectionName) {
+        const collection = collectionsConnections.get(collectionName);
+
+        if (collection) {
+            const logs = await collection.find({}, {limit, skip, sort: { _id: -1 }}).toArray();
+            return logs;
+        } else if (!collectionsUpdated) {
+            await updateCollectionSettings();
+            return getListFromCollection(collectionName, limit, skip, true);
+        } else {
+            return {
+                success: false,
+                message: `Такої колекції не існує "${collectionName}"`
+            };
+        }
+    } else {
+        return {
+            success: false,
+            message: 'Не вказане ім\'я колекції'
+        };
+    }
+}
+
+async function queryFromCollection(collectionName, key, queryParam, skip = 0) {
+    try {
+        await updateCollectionSettings();
+
+        const collection = collectionsConnections.get(collectionName);
+
+        if (collection) {
+            const collectionSettings = collectionsSettings.get(collectionName);
+            const keyIndexed = collectionSettings.indexedKeys.find(
+                (keyObj) => keyObj.key === key
+            );
+
+            if (keyIndexed) {
+                if (keyIndexed.type === 'date') {
+                    if (queryParam.start && queryParam.end) {
+                        queryParam.start = new Date(queryParam.start);
+                        queryParam.end = new Date(queryParam.end);
+                        const result = await collection.find({
+                            [key]: {
+                                '$gte': queryParam.start,
+                                '$lte': queryParam.end
+                            }
+                        }, { limit: 50
+                            , skip, sort: { [key]: -1 } }).toArray();
+                        return {
+                            success: true,
+                            logs: result
+                        };
+                    } else {
+                        return {
+                            success: false,
+                            message: `Не вказаний проміжок дат для пошуку: {start: ${queryParam.start}, end: ${queryParam.end}}`
+                        };
+                    }
+                } else if (keyIndexed.type === 'objectId') {
+                    const result = await collection.find({ _id: ObjectId(queryParam) }).toArray();
+                    return {
+                        success: true,
+                        logs: result
+                    };
+                } else {
+                    const result = await collection.find(
+                        { [key]: queryParam },
+                        { limit: 50, skip, sort: { _id: -1 } }).toArray();
+                    return {
+                        success: true,
+                        logs: result
+                    };
+                }
+            } else {
+                return {
+                    success: false,
+                    message: `Пошук за даним ключом неможливий - ${key}`
+                }
+            }
+        } else {
+            return {
+                success: false,
+                message: `Такої колекції з логами не існує "${collectionName}"`
+            };
+        }
+    } catch (e) {
+        console.log(e);
+        return {
+            success: false,
+            messase: 'Виникла помилка під час пошуку логів',
+            error: e.toString()
+        }
+    }
+}
+
 module.exports.insertLog = insertLog;
 module.exports.createRecord = createRecord;
 module.exports.getRecordsByLocalHl = getRecordsByLocalHl;
@@ -177,3 +339,7 @@ module.exports.deleteRecord = deleteRecord;
 module.exports.createIdAssociation = createIdAssociation;
 module.exports.getMainByLocalHl = getMainByLocalHl;
 module.exports.getCatalogByLocalHl = getCatalogByLocalHl;
+
+module.exports.getCollectionSettings = getCollectionSettings;
+module.exports.getListFromCollection = getListFromCollection;
+module.exports.queryFromCollection = queryFromCollection;
