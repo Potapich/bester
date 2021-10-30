@@ -140,7 +140,7 @@ function insertLog(adminName, user, action, system, description) {
 
 async function createIdAssociation(uniqueID, genre, LocalHl) {
     try {
-        assocCollection.find({"genre": genre}).toArray(function (err, result) {
+        assocCollection.find({"genre": genre, "LocalHl": LocalHl}).toArray(function (err, result) {
             if (typeof result !== "undefined" && result.length > 0) {
                 var newArr = [uniqueID];
                 var nowArr = result[0].games;
