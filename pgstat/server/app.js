@@ -36,6 +36,7 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, accept, content-type, user-agent,accept-encoding,accept-language');
+    res.setHeader('Access-Control-Allow-Credentials', true);
     // try {
     //     if (!jwt.verify(req.query.secr, config.jwtSecret)) {
     next();
@@ -47,9 +48,9 @@ app.use(function (req, res, next) {
     // }
 });
 
-app.all('/', function (req, res, next) {
+app.all('/sv/node_techhost_sv', function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', '*');
     res.setHeader('Access-Control-Allow-Credentials', true);
     //intercepts OPTIONS method
@@ -61,6 +62,7 @@ app.all('/', function (req, res, next) {
         next();
     }
 });
+
 
 app.all('/', function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
