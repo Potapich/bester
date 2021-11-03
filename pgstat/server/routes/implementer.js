@@ -16,7 +16,7 @@ const lib_db = require('../libs/db_lib');
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: true}));
 
-let locals = [{hl: 'en', gl: 'us', mostPopFree: 'Most Popular Free', mostPopPaid: 'Most Popular Free'},
+let locals = [{hl: 'en', gl: 'us', mostPopFree: 'Most Popular Free', mostPopPaid: 'Most Popular Paid'},
     {hl: 'nl', gl: 'de', mostPopFree: 'Am beliebtesten kostenlos', mostPopPaid: 'Am beliebtesten bezahlt'},
     {hl: 'ru', gl: 'ru', mostPopFree: 'Самые популярные бесплатные', mostPopPaid: 'Самые популярные платные'},
     {hl: 'zh-cn', gl: 'cn', mostPopFree: '最受欢迎免费', mostPopPaid: '最受欢迎的付费'},
