@@ -34,9 +34,9 @@ server.listen(config.http_express_port, function () {
 // });
 
 /**
-app use
-if no let uniqueID = crypto.createHash('md5').update(gameUrl + '&hl=' + localHl + '&gl=' + localGl).digest('hex')
-give hash and write to base
+ app use
+ if no let uniqueID = crypto.createHash('md5').update(gameUrl + '&hl=' + localHl + '&gl=' + localGl).digest('hex')
+ give hash and write to base
  if yes - do plus to base
 
  app.use - adminka
@@ -47,16 +47,7 @@ app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
     try {
-        if (req.query.ident && checkIdent(req.query.ident)) {
-            addSlashCountIdent(req.query.ident)
-            next();
-        } else {
-            let current_date = (new Date()).valueOf().toString()
-            let random = Math.random().toString()
-            let uniqueIdent = crypto.createHash('md5').update(current_date + random).digest('hex')
-            addSlashCountIdent(uniqueIdent)
-            res.status(200).json({'message': 'new ident', 'ident': uniqueIdent})
-        }
+        next();
     } catch (e) {
         res.status(401).json({message: 'No authorization'})
     }
@@ -86,6 +77,25 @@ app.all('/', function (req, res, next) {
     } else {
         //move on
         next();
+    }
+});
+
+app.all(['./routes/giveoutter*', '/admin'], function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+    try {
+        if (req.query.ident && checkIdent(req.query.ident)) {
+            addSlashCountIdent(req.query.ident)
+            next();
+        } else {
+            let current_date = (new Date()).valueOf().toString()
+            let random = Math.random().toString()
+            let uniqueIdent = crypto.createHash('md5').update(current_date + random).digest('hex')
+            addSlashCountIdent(uniqueIdent)
+            res.status(200).json({'message': 'new ident', 'ident': uniqueIdent})
+        }
+    } catch (e) {
+        res.status(401).json({message: 'No authorization'})
     }
 });
 
