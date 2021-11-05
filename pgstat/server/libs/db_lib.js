@@ -9,6 +9,7 @@ let bestCollection;
 let assocCollection;
 let logsCollection;
 let bestCollectionMain;
+let identCollection;
 
 const collectionsSettings = new Map();
 const collectionsConnections = new Map();
@@ -26,6 +27,7 @@ const collectionsConnections = new Map();
             bestCollection = dbo.collection(mongoConfig.bestCollection);
             assocCollection = dbo.collection(mongoConfig.assocCollection);
             bestCollectionMain = dbo.collection(mongoConfig.mainCollection);
+            identCollection = dbo.collection(mongoConfig.identCollection);
             bestCollectionMain.createIndex({'LocalHl': 1});
             bestCollection.createIndex({'localHl': 1});
             bestCollection.createIndex({'genre': 1});
@@ -62,7 +64,8 @@ async function checkRecordExistence(fullUrl) {
 
 async function getRecordsByGenre(localHl, genre) {
     try {
-        return await bestCollection.find({'genre': genre, 'localHl': localHl}).toArray();;
+        return await bestCollection.find({'genre': genre, 'localHl': localHl}).toArray();
+        ;
     } catch (e) {
         console.log('MONGO_ERROR', e);
     }
@@ -71,7 +74,7 @@ async function getRecordsByGenre(localHl, genre) {
 async function getRecordsByLocalHl(localHl) {
     try {
         return await bestCollection.find({'localHl': localHl}, {
-            projection:{ _id: 0 }
+            projection: {_id: 0}
         }).toArray();
     } catch (e) {
         console.log('MONGO_ERROR', e);
@@ -89,7 +92,7 @@ async function getRecordsByLocalGl(localGl) {
 async function getMainByLocalHl(LocalHl) {
     try {
         return await bestCollectionMain.find({'local': LocalHl}, {
-            projection:{ _id: 0 }
+            projection: {_id: 0}
         }).toArray();
     } catch (e) {
         console.log('MONGO_ERROR', e);
@@ -99,7 +102,7 @@ async function getMainByLocalHl(LocalHl) {
 async function getCatalogByLocalHl(LocalHl) {
     try {
         return await assocCollection.find({'LocalHl': LocalHl}, {
-            projection:{ _id: 0 }
+            projection: {_id: 0}
         }).toArray();
     } catch (e) {
         console.log('MONGO_ERROR', e);
@@ -239,7 +242,7 @@ async function getListFromCollection(
         const collection = collectionsConnections.get(collectionName);
 
         if (collection) {
-            const logs = await collection.find({}, {limit, skip, sort: { _id: -1 }}).toArray();
+            const logs = await collection.find({}, {limit, skip, sort: {_id: -1}}).toArray();
             return logs;
         } else if (!collectionsUpdated) {
             await updateCollectionSettings();
@@ -280,8 +283,10 @@ async function queryFromCollection(collectionName, key, queryParam, skip = 0) {
                                 '$gte': queryParam.start,
                                 '$lte': queryParam.end
                             }
-                        }, { limit: 50
-                            , skip, sort: { [key]: -1 } }).toArray();
+                        }, {
+                            limit: 50
+                            , skip, sort: {[key]: -1}
+                        }).toArray();
                         return {
                             success: true,
                             logs: result
@@ -293,15 +298,15 @@ async function queryFromCollection(collectionName, key, queryParam, skip = 0) {
                         };
                     }
                 } else if (keyIndexed.type === 'objectId') {
-                    const result = await collection.find({ _id: ObjectId(queryParam) }).toArray();
+                    const result = await collection.find({_id: ObjectId(queryParam)}).toArray();
                     return {
                         success: true,
                         logs: result
                     };
                 } else {
                     const result = await collection.find(
-                        { [key]: queryParam },
-                        { limit: 50, skip, sort: { _id: -1 } }).toArray();
+                        {[key]: queryParam},
+                        {limit: 50, skip, sort: {_id: -1}}).toArray();
                     return {
                         success: true,
                         logs: result
@@ -329,6 +334,40 @@ async function queryFromCollection(collectionName, key, queryParam, skip = 0) {
     }
 }
 
+async function addSlashCountIdent(ident) {
+    try {
+        identCollection.find({"ident": ident}).toArray(function (err, result) {
+            if (typeof result !== "undefined" && result.length > 0) {
+                let current_enter_count = result[0].enter_count + 1;
+                identCollection.updateOne({ident: ident}, {
+                    $set: {
+                        "enter_count": current_enter_count,
+                    }
+                })
+            } else {
+                identCollection.insertOne({
+                    "ident": ident,
+                    "enter_count": 1,
+                });
+            }
+        });
+    } catch (e) {
+        console.log('MONGO_ERROR update assoc', e);
+    }
+}
+
+async function checkIdent(ident) {
+    try {
+        identCollection.find({"ident": ident}).toArray(function (err, result) {
+            return typeof result !== "undefined" && result.length > 0;
+        });
+    } catch (e) {
+        console.log('MONGO_ERROR update assoc', e);
+        return false
+    }
+}
+
+
 module.exports.insertLog = insertLog;
 module.exports.createRecord = createRecord;
 module.exports.getRecordsByLocalHl = getRecordsByLocalHl;
@@ -343,3 +382,6 @@ module.exports.getCatalogByLocalHl = getCatalogByLocalHl;
 module.exports.getCollectionSettings = getCollectionSettings;
 module.exports.getListFromCollection = getListFromCollection;
 module.exports.queryFromCollection = queryFromCollection;
+
+module.exports.addSlashCountIdent = addSlashCountIdent;
+module.exports.checkIdent = checkIdent;

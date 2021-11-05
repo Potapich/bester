@@ -11,10 +11,11 @@
  */
 const express = require('express');
 const cron = require('node-cron');
-const jwt = require('jsonwebtoken')
 const config = require('./config')
 const app = express();
 const fs = require('fs');
+const lib_db = require('./libs/db_lib')
+const crypto = require('crypto')
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
@@ -32,18 +33,33 @@ server.listen(config.http_express_port, function () {
 //     get_position()
 // });
 
+/**
+app use
+if no let uniqueID = crypto.createHash('md5').update(gameUrl + '&hl=' + localHl + '&gl=' + localGl).digest('hex')
+give hash and write to base
+ if yes - do plus to base
+
+ app.use - adminka
+ for adminka - do pswd!!!
+ **/
+
 app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    // try {
-    //     if (!jwt.verify(req.query.secr, config.jwtSecret)) {
-    next();
-    //     } else {
-    //         res.status(401).json({'message': 'error', 'description': 'Partial Content. Not enough data!'})
-    //     }
-    // } catch (e) {
-    //     return res.status(401).json({message: 'No authorization'})
-    // }
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+    try {
+        if (req.query.ident && checkIdent(req.query.ident)) {
+            addSlashCountIdent(req.query.ident)
+            next();
+        } else {
+            let current_date = (new Date()).valueOf().toString()
+            let random = Math.random().toString()
+            let uniqueIdent = crypto.createHash('md5').update(current_date + random).digest('hex')
+            addSlashCountIdent(uniqueIdent)
+            res.status(200).json({'message': 'new ident', 'ident': uniqueIdent})
+        }
+    } catch (e) {
+        res.status(401).json({message: 'No authorization'})
+    }
 });
 
 app.all('/', function (req, res, next) {
@@ -94,6 +110,7 @@ app.get(
 );
 
 app.get('/admin', function (req, res, next) {
+    addSlashCountIdent('admin')
     res.sendFile('index.html', {root: __dirname + '/front/best-games/'});
 });
 
@@ -127,3 +144,11 @@ app.get('/pgstat/present', function (req, res) {
         })
     }
 })
+
+async function checkIdent(ident) {
+    await lib_db.checkIdent(ident);
+}
+
+async function addSlashCountIdent(ident) {
+    await lib_db.addSlashCountIdent(ident);
+}

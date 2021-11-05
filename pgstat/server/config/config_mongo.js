@@ -7,5 +7,6 @@ module.exports = {
     // mongoURL: "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB Compass&ssl=false",
     bestCollection: 'pg_as_best_collection',
     assocCollection: 'pg_as_best_association_collection',
-    mainCollection: 'pg_as_best_mainByLocal'
+    mainCollection: 'pg_as_best_mainByLocal',
+    identCollection: 'pg_as_best_ident'
 };
