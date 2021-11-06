@@ -80,25 +80,6 @@ app.all('/', function (req, res, next) {
     }
 });
 
-app.all(['/pg_as_best/giveaway*', '/admin', '/pg_as_best/workout*', ], function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*")
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-    try {
-        if (req.query.ident && checkIdent(req.query.ident)) {
-            addSlashCountIdent(req.query.ident)
-            next();
-        } else {
-            let current_date = (new Date()).valueOf().toString()
-            let random = Math.random().toString()
-            let uniqueIdent = crypto.createHash('md5').update(current_date + random).digest('hex')
-            addSlashCountIdent(uniqueIdent)
-            res.status(200).json({'message': 'new ident', 'ident': uniqueIdent})
-        }
-    } catch (e) {
-        res.status(401).json({message: 'No authorization'})
-    }
-});
-
 app.get(
     ['/detailDelta*', '/simpleDelta*', '/detailSmart*',
         '/runtime*', '/polyfills*', '/styles*', '/main*', '/Exo2*', '/favicon*', '/assets*'],
@@ -122,6 +103,25 @@ app.get(
 app.get('/admin', function (req, res, next) {
     addSlashCountIdent('admin')
     res.sendFile('index.html', {root: __dirname + '/front/best-games/'});
+});
+
+app.all(['/pg_as_best/giveaway*'], function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+    try {
+        if (req.query.ident && checkIdent(req.query.ident)) {
+            addSlashCountIdent(req.query.ident)
+            next();
+        } else {
+            let current_date = (new Date()).valueOf().toString()
+            let random = Math.random().toString()
+            let uniqueIdent = crypto.createHash('md5').update(current_date + random).digest('hex')
+            addSlashCountIdent(uniqueIdent)
+            res.status(200).json({'message': 'new ident', 'ident': uniqueIdent})
+        }
+    } catch (e) {
+        res.status(401).json({message: 'No authorization'})
+    }
 });
 
 //rout best grabber
