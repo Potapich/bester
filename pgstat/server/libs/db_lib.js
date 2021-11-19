@@ -149,13 +149,11 @@ async function createIdAssociation(uniqueID, genre, LocalHl) {
     try {
         assocCollection.find({"genre": genre, "LocalHl": LocalHl}).toArray(function (err, result) {
             if (typeof result !== "undefined" && result.length > 0) {
-                var newArr = [uniqueID];
-                var nowArr = result[0].games;
-
-                var tempArr = newArr.concat(nowArr)
-                var lastArr = tempArr.filter((item, pos) => tempArr.indexOf(item) === pos)
-
-                assocCollection.updateOne({genre: genre}, {
+                let newArr = [uniqueID];
+                let nowArr = result[0].games;
+                let tempArr = newArr.concat(nowArr)
+                let lastArr = tempArr.filter((item, pos) => tempArr.indexOf(item) === pos)
+                assocCollection.update({genre: genre}, {
                     $set: {
                         "games": lastArr,
                     }
