@@ -4,6 +4,8 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const sv_db = require('../libs/db_lib');
 
+let advertising = false;
+
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: true}));
 
@@ -17,6 +19,14 @@ router.get('/getRecords', async function (req, res) {
     res.send(records);
 });
 
+router.get('/advertisingSwitch', async function (req, res) {
+    if (req.query.mode) {
+        advertising = req.query.mode;
+        res.status(200).json({status: 'ok', message: `The mode is ${advertising} now!`});
+    } else {
+        res.status(500).json({status: 'error', message: 'Where is mode?'});
+    }
+});
 
 router.get('/getRecordsByLocalHl', async function (req, res) {
     if (req.query.LocalHl) {
@@ -70,7 +80,8 @@ router.get('/content/getAllByLocalHl', async function (req, res) {
             let answer = {
                 "labels": mains[0],
                 "games": result,
-                "catalog": catalog
+                "catalog": catalog,
+                "adv": advertising
             }
             res.send(answer);
         } else {
