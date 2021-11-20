@@ -16,7 +16,8 @@ const lib_db = require('../libs/db_lib');
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: true}));
 
-let locals = [{hl: 'en', gl: 'us', mostPopFree: 'Most Popular Free', mostPopPaid: 'Most Popular Paid'},
+let locals = [{hl: 'uk', gl: 'ua', mostPopFree: 'Найпопулярніші безкоштовні', mostPopPaid: 'Найпопулярніші платні'},
+    {hl: 'en', gl: 'us', mostPopFree: 'Most Popular Free', mostPopPaid: 'Most Popular Paid'},
     {hl: 'nl', gl: 'de', mostPopFree: 'Am beliebtesten kostenlos', mostPopPaid: 'Am beliebtesten bezahlt'},
     {hl: 'ru', gl: 'ru', mostPopFree: 'Самые популярные бесплатные', mostPopPaid: 'Самые популярные платные'},
     {hl: 'zh-cn', gl: 'cn', mostPopFree: '最受欢迎免费', mostPopPaid: '最受欢迎的付费'},
@@ -30,7 +31,8 @@ let locals = [{hl: 'en', gl: 'us', mostPopFree: 'Most Popular Free', mostPopPaid
     {hl: 'pt-br', gl: 'pt', mostPopFree: 'Mais populares grátis', mostPopPaid: 'Mais popular pago'},
     {hl: 'es', gl: 'es', mostPopFree: 'Gratis más popular', mostPopPaid: 'Más pagado'},
     {hl: 'it', gl: 'it', mostPopFree: 'I più popolari gratis', mostPopPaid: 'Più popolare pagato'},
-    {hl: 'uk', gl: 'ua', mostPopFree: 'Найпопулярніші безкоштовні', mostPopPaid: 'Найпопулярніші платні'}];
+    {hl: 'uk', gl: 'ua', mostPopFree: 'Найпопулярніші безкоштовні', mostPopPaid: 'Найпопулярніші платні'},
+    {hl: 'en', gl: 'us', mostPopFree: 'Most Popular Free', mostPopPaid: 'Most Popular Paid'}];
 
 router.get('/getRecords', async function (req, res) {
     let createdRecord = await lib_db.getRecordsArray();
