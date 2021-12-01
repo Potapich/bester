@@ -125,9 +125,9 @@ async function getRecordsByLocalHl(localHl) {
                 break
         }
 
-        return await bestCollection.find({'localHl': localHl}, {
+        return await bestCollection.find({$and: [{localHl: localHl}, {genre: {$ne: projectionGenre}}]}, {
             projection: {_id: 0}
-        }).skip({genre: projectionGenre}).toArray();
+        }).toArray();
     } catch (e) {
         console.log('MONGO_ERROR', e);
     }
