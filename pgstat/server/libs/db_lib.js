@@ -77,40 +77,56 @@ async function getRecordsByLocalHl(localHl) {
         switch(localHl) {
             case 'en':
                 projectionGenre = "Casino"
+                break
             case 'uk':
                 projectionGenre = "Казино"
+                break
             case 'ru':
                 projectionGenre = "Казино"
+                break
             case 'nl':
                 projectionGenre = "Casino"
+                break
             case 'zh-cn':
                 projectionGenre = "赌场"
+                break
             case 'ja':
                 projectionGenre = "カジノ"
+                break
             case 'es-mx':
                 projectionGenre = "Casino"
+                break
             case 'ko':
                 projectionGenre = "카지노"
+                break
             case 'fr':
                 projectionGenre = "Casino"
+                break
             case 'tr':
                 projectionGenre = "Kumarhane Oyunları"
+                break
             case 'ms':
                 projectionGenre = "Casino"
+                break
             case 'hi':
                 projectionGenre = "Казино"
+                break
             case 'pt-br':
                 projectionGenre = "Cassino"
+                break
             case 'es':
                 projectionGenre = "Casino"
+                break
             case 'it':
                 projectionGenre = "Casinò"
+                break
             default:
                 projectionGenre = "Casino"
+                break
         }
 
-        return await bestCollection.find({'localHl': localHl}, {
-            projection: {_id: 0, 'genre': projectionGenre}
+        return await bestCollection.find({'localHl': localHl}, { genre: projectionGenre }, {
+            projection: {_id: 0}
         }).toArray();
     } catch (e) {
         console.log('MONGO_ERROR', e);
