@@ -73,8 +73,44 @@ async function getRecordsByGenre(localHl, genre) {
 
 async function getRecordsByLocalHl(localHl) {
     try {
+        let projectionGenre
+        switch(localHl) {
+            case 'en':
+                projectionGenre = "Casino"
+            case 'uk':
+                projectionGenre = "Казино"
+            case 'ru':
+                projectionGenre = "Казино"
+            case 'nl':
+                projectionGenre = "Casino"
+            case 'zh-cn':
+                projectionGenre = "赌场"
+            case 'ja':
+                projectionGenre = "カジノ"
+            case 'es-mx':
+                projectionGenre = "Casino"
+            case 'ko':
+                projectionGenre = "카지노"
+            case 'fr':
+                projectionGenre = "Casino"
+            case 'tr':
+                projectionGenre = "Kumarhane Oyunları"
+            case 'ms':
+                projectionGenre = "Casino"
+            case 'hi':
+                projectionGenre = "Казино"
+            case 'pt-br':
+                projectionGenre = "Cassino"
+            case 'es':
+                projectionGenre = "Casino"
+            case 'it':
+                projectionGenre = "Casinò"
+            default:
+                projectionGenre = "Casino"
+        }
+
         return await bestCollection.find({'localHl': localHl}, {
-            projection: {_id: 0}
+            projection: {_id: 0, 'genre': projectionGenre}
         }).toArray();
     } catch (e) {
         console.log('MONGO_ERROR', e);
@@ -151,14 +187,19 @@ async function createIdAssociation(uniqueID, genre, LocalHl) {
             if (typeof result !== "undefined" && result.length > 0) {
                 let newArr = [uniqueID];
                 let nowArr = result[0].games;
+                console.log('Arr\n', newArr, nowArr)
+
                 let tempArr = newArr.concat(nowArr)
                 let lastArr = tempArr.filter((item, pos) => tempArr.indexOf(item) === pos)
+                console.log('update\n', lastArr, uniqueID, genre, LocalHl)
                 assocCollection.update({genre: genre}, {
                     $set: {
                         "games": lastArr,
                     }
                 })
             } else {
+                console.log('new\n', uniqueID, genre, LocalHl)
+
                 let gameArray = [uniqueID];
                 assocCollection.insertOne({
                     "genre": genre,
