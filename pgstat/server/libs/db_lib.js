@@ -205,7 +205,7 @@ async function getCatalogByLocalHl(LocalHl) {
                 break
         }
 
-        return await assocCollection.find({$and: [{LocalHl: LocalHl}, {genre: {$ne: projectionGenre}}]}, {
+        return await assocCollection.find({$and: [{localHl: LocalHl}, {genre: {$ne: projectionGenre}}]}, {
             projection: {_id: 0}
         }).toArray();
     } catch (e) {
