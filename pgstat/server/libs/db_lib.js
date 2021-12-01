@@ -74,7 +74,7 @@ async function getRecordsByGenre(localHl, genre) {
 async function getRecordsByLocalHl(localHl) {
     try {
         let projectionGenre
-        switch(localHl) {
+        switch (localHl) {
             case 'en':
                 projectionGenre = "Casino"
                 break
@@ -125,9 +125,9 @@ async function getRecordsByLocalHl(localHl) {
                 break
         }
 
-        return await bestCollection.find({'localHl': localHl}, { genre: projectionGenre }, {
+        return await bestCollection.find({'localHl': localHl}, {
             projection: {_id: 0}
-        }).toArray();
+        }).skip({genre: projectionGenre}).toArray();
     } catch (e) {
         console.log('MONGO_ERROR', e);
     }
