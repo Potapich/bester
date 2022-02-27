@@ -65,9 +65,7 @@ async function addFucksUrls(body) {
             if (recordExists) {
                 fucksBase.replaceOne({
                     url: body[key].url
-                }, function (err, result) {
-                    console.log('err: ', err, 'result: ', result)
-                });
+                }, body[key])
             } else {
                 await fucksBase.insertMany(body);
             }
