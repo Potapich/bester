@@ -94,7 +94,7 @@ async function updateFuckUrl(body) {
 
 async function getFuckUrls() {
     try {
-        return await fucksBase.find({}).toArray();
+        return await fucksBase.find({}, {_id:0}).toArray();
     } catch (e) {
         console.log('MONGO_ERROR', e);
     }
