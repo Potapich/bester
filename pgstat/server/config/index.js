@@ -5,6 +5,7 @@
 let config = {
     http_express_port : 8000,
     "jwtSecret": "Pedash Mykhailo pG_APs00re_pro-='/sds,>d34",
+    http_express_port_fuck : 8001,
 }
 
 module.exports = config
