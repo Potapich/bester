@@ -32,7 +32,9 @@ async function addFucksUrls(body) {
             if (recordExists) {
                 fucksBase.replaceOne({
                     url: body[key].url
-                }, body);
+                }, function (err, result){
+                    console.log('err: ', err, 'result: ', result)
+                });
             } else {
                 await fucksBase.insertOne(body);
             }
@@ -42,9 +44,18 @@ async function addFucksUrls(body) {
     }
 }
 
-async function updateFuckUrl(url) {
+async function updateFuckUrl(body) {
     try {
-        return await fucksBase.update({'url': url}).toArray();
+        return await fucksBase.updateOne(
+            { "url": body.url}, // Filter
+            { "isLive": body.isLive} // Update
+        )
+            .then((obj) => {
+                console.log('Updated - ' + obj);
+            })
+            .catch((err) => {
+                console.log('Error: ' + err);
+            })
     } catch (e) {
         console.log('MONGO_ERROR', e);
     }
@@ -61,6 +72,7 @@ async function getFuckUrls() {
 async function checkRecordExistence(url) {
     try {
         const dbRequest = await fucksBase.find({'url': url}).toArray();
+        console.log('dbRequest: ', dbRequest)
         return Boolean(dbRequest.length);
     } catch (e) {
         console.log('MONGO_ERROR', e);
