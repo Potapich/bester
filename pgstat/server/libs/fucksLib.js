@@ -58,12 +58,13 @@ let fucksBase;
 
 //add/edit new record to game list
 async function addFucksUrls(body) {
+    console.log(JSON.parse(body[0]).url)
     try {
         for (let key in body) {
-            let recordExists = await checkRecordExistence(JSON.parse(body[key].url))
+            let recordExists = await checkRecordExistence(JSON.parse(body[key]).url)
             if (recordExists) {
                 fucksBase.replaceOne({
-                    url: JSON.parse(body[key].url)
+                    url: JSON.parse(body[key]).url
                 }, function (err, result) {
                     console.log('err: ', err, 'result: ', result)
                 });
