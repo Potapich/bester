@@ -13,12 +13,16 @@ const express = require('express');
 const config = require('./config')
 const app = express();
 const lib_db = require('./libs/fucksLib')
+const bodyParser = require('body-parser');
 
 let server = require('http').createServer(app);
 
 server.listen(config.http_express_port_fuck, function () {
     console.log('App listening on port ' + config.http_express_port_fuck + '!')
 });
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/letsFuckRussianMilitaryShip', async function (req, res, next) {
     let records = await lib_db.getFuckUrls();
