@@ -6,24 +6,7 @@ let urlDB = mongoConfig.mongoURL;//'mongodb://' + mongoConfig.user + ':' + mongo
 const dbName = mongoConfig.dbName;
 let dbo;
 let fucksBase;
-let arr = []
-
-(function mongo_starter() {
-    MongoClient.connect(urlDB, {   // + '/' + dbName, {
-        useUnifiedTopology: true, useNewUrlParser: true
-    }, function (err, db) {
-        if (err) {
-            console.log(err);
-            return err;
-        } else {
-            console.log("Connected successfully to db");
-            dbo = db.db();
-            fucksBase = dbo.collection(mongoConfig.fucksBase);
-            fucksBase.createIndex({'url': 1});
-
-        }
-    })
-})();
+let arr;
 
 //add/edit new record to game list
 async function addFucksUrls(body) {
@@ -42,7 +25,6 @@ async function updateFuckUrl(body) {
             }
             return obj;
         });
-
         arr = newArr
     } catch (e) {
         console.log('MONGO_ERROR', e);
@@ -56,6 +38,23 @@ async function getFuckUrls() {
         console.log('MONGO_ERROR', e);
     }
 }
+
+// (function mongo_starter() {
+//     MongoClient.connect(urlDB, {   // + '/' + dbName, {
+//         useUnifiedTopology: true, useNewUrlParser: true
+//     }, function (err, db) {
+//         if (err) {
+//             console.log(err);
+//             return err;
+//         } else {
+//             console.log("Connected successfully to db");
+//             dbo = db.db();
+//             fucksBase = dbo.collection(mongoConfig.fucksBase);
+//             fucksBase.createIndex({'url': 1});
+//
+//         }
+//     })
+// })();
 
 // //add/edit new record to game list
 // async function addFucksUrls(body) {
