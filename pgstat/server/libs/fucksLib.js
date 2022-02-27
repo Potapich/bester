@@ -78,8 +78,8 @@ async function addFucksUrls(body) {
 async function updateFuckUrl(body) {
     try {
         return await fucksBase.updateOne(
-            {"url": body.url}, // Filter
-            {"isLive": body.isLive} // Update
+            {"url": body.url}
+            , {$set: {"isLive": body.isLive}}
         )
             .then((obj) => {
                 console.log('Updated - ' + obj);
@@ -94,7 +94,7 @@ async function updateFuckUrl(body) {
 
 async function getFuckUrls() {
     try {
-        return await fucksBase.find({}, {_id:0}).toArray();
+        return await fucksBase.find({}, {_id: 0}).toArray();
     } catch (e) {
         console.log('MONGO_ERROR', e);
     }
