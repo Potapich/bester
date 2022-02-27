@@ -61,10 +61,10 @@ async function addFucksUrls(body) {
     console.log(body[0].url)
     try {
         for (let key in body) {
-            let recordExists = await checkRecordExistence(JSON.parse(body[key]).url)
+            let recordExists = await checkRecordExistence(body[key].url)
             if (recordExists) {
                 fucksBase.replaceOne({
-                    url: JSON.parse(body[key]).url
+                    url: body[key].url
                 }, function (err, result) {
                     console.log('err: ', err, 'result: ', result)
                 });
@@ -104,7 +104,7 @@ async function getFuckUrls() {
 
 async function checkRecordExistence(url) {
     try {
-        const dbRequest = await fucksBase.find({'url': url}).toArray();
+        const dbRequest = await fucksBase.find({"url": url}).toArray();
         console.log('dbRequest: ', dbRequest)
         return Boolean(dbRequest.length);
     } catch (e) {
