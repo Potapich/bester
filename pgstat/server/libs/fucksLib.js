@@ -1,12 +1,17 @@
 const mongoConfig = require('../config/config_mongo');
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 let urlDB = mongoConfig.mongoURL;//'mongodb://' + mongoConfig.user + ':' + mongoConfig.password + '@' + mongoConfig.rootlink_ip + ',' + mongoConfig.secondarylink_ip;
-const dbName = mongoConfig.dbName;
+// const dbName = mongoConfig.dbName;
 let dbo;
 let fucksBase;
-let arr;
+// let arr;
 
 // //add/edit new record to game list
 // async function addFucksUrls(body) {
@@ -65,7 +70,7 @@ async function addFucksUrls(body) {
             if (recordExists) {
                 fucksBase.replaceOne({
                     url: body[key].url
-                }, function (err, result){
+                }, function (err, result) {
                     console.log('err: ', err, 'result: ', result)
                 });
             } else {
@@ -80,8 +85,8 @@ async function addFucksUrls(body) {
 async function updateFuckUrl(body) {
     try {
         return await fucksBase.updateOne(
-            { "url": body.url}, // Filter
-            { "isLive": body.isLive} // Update
+            {"url": body.url}, // Filter
+            {"isLive": body.isLive} // Update
         )
             .then((obj) => {
                 console.log('Updated - ' + obj);
