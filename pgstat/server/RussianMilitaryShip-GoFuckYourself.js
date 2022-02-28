@@ -53,7 +53,7 @@ app.post('/updateFuckers', async function (req, res, next) {
     }
 });
 
-app.post('/removeAllFuckers', async function (req, res, next) {
+app.get('/removeAllFuckers', async function (req, res, next) {
     let strPass = req.query.meparam;
     if ((strPass.length % 4) == 0 && (strPass.charAt(strPass.length / 4 - 1) == 'x' && strPass.charAt((strPass.length / 4) * 2 - 1) == 'y' && strPass.charAt((strPass.length / 4) * 3 - 1) == 'u')) {
         await removeFuckUrl(req.body)
