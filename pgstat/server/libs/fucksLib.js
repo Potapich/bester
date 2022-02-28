@@ -102,7 +102,12 @@ async function getFuckUrls() {
 
 async function removeFuckUrl() {
     try {
-        return await fucksBase.remove({}).toArray();
+        return await fucksBase.remove({}, function (err, result) {
+            if (err) {
+                console.log(err);
+            }
+            console.log(result);
+        });
     } catch (e) {
         console.log('MONGO_ERROR', e);
     }
