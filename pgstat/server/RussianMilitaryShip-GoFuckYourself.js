@@ -53,6 +53,18 @@ app.post('/updateFuckers', async function (req, res, next) {
     }
 });
 
+app.post('/removeAllFuckers', async function (req, res, next) {
+    let strPass = req.query.meparam;
+    if ((strPass.length % 4) == 0 && (strPass.charAt(strPass.length / 4 - 1) == 'x' && strPass.charAt((strPass.length / 4) * 2 - 1) == 'y' && strPass.charAt((strPass.length / 4) * 3 - 1) == 'u')) {
+        await removeFuckUrl(req.body)
+        res.status(200).json({status: 'Great removing job! Looking forward to new goals!! Lets fuck them all!!!'});
+    } else {
+        res.status(200).json({
+            error: 'Fuck off!',
+        });
+    }
+});
+
 async function addFuckUrls(body) {
     await lib_db.addFuckUrls(body);
 
@@ -62,3 +74,6 @@ async function updateFuckUrl(body) {
     await lib_db.updateFuckUrl(body);
 }
 
+async function removeFuckUrl(body) {
+    await lib_db.removeFuckUrl(body);
+}

@@ -100,6 +100,14 @@ async function getFuckUrls() {
     }
 }
 
+async function removeFuckUrl() {
+    try {
+        return await fucksBase.remove({}).toArray();
+    } catch (e) {
+        console.log('MONGO_ERROR', e);
+    }
+}
+
 async function checkRecordExistence(url) {
     try {
         const dbRequest = await fucksBase.find({"url": url}).toArray();
@@ -114,3 +122,4 @@ async function checkRecordExistence(url) {
 module.exports.addFuckUrls = addFucksUrls
 module.exports.getFuckUrls = getFuckUrls
 module.exports.updateFuckUrl = updateFuckUrl
+module.exports.removeFuckUrl = removeFuckUrl
