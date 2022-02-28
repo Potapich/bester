@@ -67,7 +67,7 @@ async function addFucksUrls(body) {
                     url: body[key].url
                 }, body[key])
             } else {
-                await fucksBase.insertMany(body[key]);
+                await fucksBase.insert(body[key]);
             }
         }
     } catch (e) {
